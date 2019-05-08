@@ -38,14 +38,15 @@ public class helpers {
         return XML;
     }
 
+    /*
     public static Response AddUpdateGradeBook(String Name, ConcurrentHashMap<String, Gradebook> GradebooksDB, boolean isPrimary) throws UnsupportedEncodingException{
         // String _grade = helpers.DecodeValue(Grade);
         String _name = helpers.DecodeValue(Name);
 
-        String _otherServer = !isPrimary ? "primary" : "secondary";
+        String _otherServer = !isPrimary ? gradebookService.GetServerName() : secondaryService.GetServerName();
         ConcurrentHashMap<String, Gradebook> otherDB = isPrimary ? secondaryService.GetDB() : gradebookService.GetDB();
 
-        String _thisServer = isPrimary ? "primary" : "secondary";
+        String _thisServer = isPrimary ? gradebookService.GetServerName() : secondaryService.GetServerName();
         Gradebook _gradeBook = new Gradebook(_thisServer, _name);
 
         if(otherDB.containsKey(helpers.GetHashID(Name, _otherServer))) {
@@ -60,6 +61,36 @@ public class helpers {
 
         //return getGradeBookResponse(_gradeBook);
         return Response.status(200).entity(_gradeBook.getID()).build();
+        //status(200).entity(getStudentXML(student)).build()
+    }
+
+*/
+    public static Response CloneGradeBookToSecondary(String GradebookID) throws UnsupportedEncodingException{
+        // String _grade = helpers.DecodeValue(Grade);
+        //String _name = helpers.DecodeValue(Name);
+
+        ConcurrentHashMap<String, Gradebook> primaryDB = gradebookService.GetDB();
+        ConcurrentHashMap<String, Gradebook> secondaryDB = secondaryService.GetDB();
+
+        Gradebook _existing = primaryDB.get(GradebookID);
+
+        Gradebook _clone = new Gradebook(_existing, secondaryService.GetServerName());
+
+        if(secondaryDB.containsKey(_clone.getID())) {
+            return Response.status(400).entity("Gradebook exists on " + secondaryService.GetServerName() + " server").build();
+
+        }else{
+            // _gradeBook ;
+            _existing.setCopy(_clone.getID());
+            _clone.setCopy(_existing.getID());
+            secondaryDB.putIfAbsent(_clone.getID(), _clone);
+        }
+        //else{
+          //  return Response.status(400).entity("Gradebook Exists").build();
+        //}
+
+        //return getGradeBookResponse(_gradeBook);
+        return Response.status(200).entity(_clone.getID()).build();
         //status(200).entity(getStudentXML(student)).build()
     }
 

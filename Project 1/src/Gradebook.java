@@ -7,6 +7,7 @@ public class Gradebook {
     private String _id;
     private String _name;
     private ConcurrentHashMap<String, Student> _students;
+    private String _copyID;
 
     public Gradebook() {
         _students = new ConcurrentHashMap<String, Student>();
@@ -19,6 +20,11 @@ public class Gradebook {
      */
     public Gradebook(String GradebookServer, String _name) {
         this.setName(_name);
+        this.setID(GradebookServer);
+    }
+
+    public Gradebook(Gradebook Clone, String GradebookServer){
+        this.setName(Clone.getName());
         this.setID(GradebookServer);
     }
 
@@ -42,12 +48,16 @@ public class Gradebook {
         this._id = helpers.GetHashID(this._name, GradebookServer);//Math.abs((this._name + Gradebook).hashCode()) + "";
     }
 
-    public ConcurrentHashMap<String, Student> getStudents() {
-        return _students;
+    public String getCopyID() {
+        return _copyID;
     }
 
-    public void setStudents(ConcurrentHashMap<String, Student> Students) {
-        this._students = Students;
+    public void setCopy(String CopyID) {
+        this._copyID = CopyID;
+    }
+
+    public void nullifyCopy() {
+        this._copyID = null;
     }
 
     public String getXML(){

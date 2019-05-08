@@ -13,6 +13,7 @@ public class gradebookService {
 
     private static ConcurrentHashMap<String, Gradebook> gradeBookDB = new ConcurrentHashMap<String, Gradebook>();
     private String _invalidGB = "Invalid Gradebook ID";
+    private static String _serverName = "primary";
 
     @GET
     @Produces("application/xml")
@@ -134,25 +135,33 @@ public class gradebookService {
 
     private Response addUpdateGradeBook(String Name) throws UnsupportedEncodingException{
        // String _grade = helpers.DecodeValue(Grade);
-        return helpers.AddUpdateGradeBook(Name, gradeBookDB, true);
+        /* * /
+        if(otherDB.containsKey(helpers.GetHashID(Name, _otherServer))) {
+            return Response.status(400).entity("Gradebook exists on " + _otherServer + " Database").build();
 
-        /*
+        }else if(!GradebooksDB.containsKey(_gradeBook.getID())){
+            // _gradeBook ;
+            GradebooksDB.putIfAbsent(_gradeBook.getID(), _gradeBook);
+        }
+
+        //return helpers.AddUpdateGradeBook(Name, gradeBookDB, true);
+
+        /**/
         String _name = helpers.DecodeValue(Name);
 
         Gradebook _gradeBook;
 
         if(!gradeBookDB.containsKey(_name)){
-            _gradeBook = new Gradebook("primary", _name);
+            _gradeBook = new Gradebook(_serverName, _name);
             gradeBookDB.putIfAbsent(_name, _gradeBook);
         }else{
-            return Response.status(400).build();
+            return Response.status(400).entity("Gradebook Already Exists").build();
         }
 
-        //return getGradeBookResponse(_gradeBook);
         return Response.status(200).entity(_gradeBook.getID()).build();
         //status(200).entity(getStudentXML(student)).build()
 
-         */
+         /**/
     }
 
     private Response getGradeBookListResponse(){
@@ -178,12 +187,16 @@ public class gradebookService {
         return gradeBookDB;
     }
 
-    public Gradebook getGradebookByID(String GradebookID){
+    public static Gradebook getGradebookByID(String GradebookID){
 
         if(!gradeBookDB.containsKey(GradebookID)) {
             return null;
         }else{
             return gradeBookDB.get(GradebookID);
         }
+    }
+
+    public static String GetServerName(){
+        return _serverName;
     }
 }

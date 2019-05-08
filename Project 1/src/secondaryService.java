@@ -10,18 +10,9 @@ public class secondaryService {
 
     private static ConcurrentHashMap<String, Gradebook> secondaryDB = new ConcurrentHashMap<String, Gradebook>();
     private String _invalidGB = "Invalid Gradebook ID";
+    private static String _serverName = "secondary";
 
-    @POST
-    @Path("{name}")
-    public Response getGradeBookGrade(@PathParam("name") String name) throws UnsupportedEncodingException {
-        return addUpdateGradeBook(name);
-    }
 
-    @PUT
-    @Path("{name}")
-    public Response updateGradeBookGrade(@PathParam("name") String name) throws UnsupportedEncodingException{
-        return addUpdateGradeBook(name);
-    }
 
     @POST
     @Path("{gradebookID}")
@@ -34,7 +25,18 @@ public class secondaryService {
     public Response putGradeBookGradebyID(@PathParam("gradebookID") String gradebookID) throws UnsupportedEncodingException{
         return cloneGradeBook(gradebookID);
     }
+    /*
+    @POST
+    @Path("{name}")
+    public Response getGradeBookGrade(@PathParam("name") String name) throws UnsupportedEncodingException {
+        return addUpdateGradeBook(name);
+    }
 
+    @PUT
+    @Path("{name}")
+    public Response updateGradeBookGrade(@PathParam("name") String name) throws UnsupportedEncodingException{
+        return addUpdateGradeBook(name);
+    }
     private Response addUpdateGradeBook(String Name) throws UnsupportedEncodingException{
         // String _grade = helpers.DecodeValue(Grade);
         System.out.println("Made it to Secondary Server \n\n\n\n");
@@ -53,22 +55,23 @@ public class secondaryService {
 
         return Response.status(200).build();
 
-         */
+         * /
     }
-
+    */
     private Response cloneGradeBook(String GradebookID) throws UnsupportedEncodingException{
-
+        return helpers.CloneGradeBookToSecondary(GradebookID);
     }
 
     @DELETE
     @Path("{gradeBookID}")
     public Response deleteGradeBook(@PathParam("gradeBookID") String GradebookID) throws UnsupportedEncodingException {
-        Gradebook _this = getGradebookByID(GradebookID);
+        Gradebook _this = GetGradebookByID(GradebookID);
 
         if(_this == null){
             return Response.status(400).entity(_invalidGB).build();
         }
 
+        gradebookService.getGradebookByID(GradebookID).nullifyCopy();
         secondaryDB.remove(GradebookID);
 
         return Response.status(400).entity(_this.getName() + " was successfully deleted from the Secondary Server").build();
@@ -79,12 +82,16 @@ public class secondaryService {
         return secondaryDB;
     }
 
-    public Gradebook getGradebookByID(String GradebookID){
+    public static Gradebook GetGradebookByID(String GradebookID){
 
         if(!secondaryDB.containsKey(GradebookID)) {
             return null;
         }else{
             return secondaryDB.get(GradebookID);
         }
+    }
+
+    public static String GetServerName(){
+        return _serverName;
     }
 }
