@@ -72,7 +72,13 @@ public class helpers {
         ConcurrentHashMap<String, Gradebook> primaryDB = gradebookService.GetDB();
         ConcurrentHashMap<String, Gradebook> secondaryDB = secondaryService.GetDB();
 
-        Gradebook _existing = primaryDB.get(GradebookID);
+        Gradebook _existing;
+
+        if(primaryDB.containsKey(GradebookID)){
+            _existing = primaryDB.get(GradebookID);
+        }else{
+            return Response.status(400).entity("Gradebook does not exist").build();
+        }
 
         Gradebook _clone = new Gradebook(_existing, secondaryService.GetServerName());
 

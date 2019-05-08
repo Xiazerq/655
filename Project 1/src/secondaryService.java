@@ -12,7 +12,22 @@ public class secondaryService {
     private String _invalidGB = "Invalid Gradebook ID";
     private static String _serverName = "secondary";
 
+    @GET
+    @Produces("application/xml")
+    //@Produces("application/text")
+    public String getGradeBooks(){
+        // return "Hello Gradebook!";
+        return getGradeBookListXML();
+    }
 
+    @GET
+    @Produces("application/xml")
+    @Path("{gradeBookID}")
+    //@Produces("application/text")
+    public String getGradeBooks(@PathParam("gradeBookID") String name){
+        // return "Hello Gradebook!";
+        return getGradeBookListXML();
+    }
 
     @POST
     @Path("{gradebookID}")
@@ -77,6 +92,20 @@ public class secondaryService {
         return Response.status(400).entity(_this.getName() + " was successfully deleted from the Secondary Server").build();
     }
 
+    private String getGradeBookListXML(){
+        StringBuilder _gradeBookList = new StringBuilder();
+
+        //_gradeBookList.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?><student-list>");
+
+        //for (int x = 0; x < studentDB.mappingCount(); x++) {
+        for(String key : secondaryDB.keySet()){
+            _gradeBookList.append(secondaryDB.get(key).getXML());
+        }
+
+        //_gradeBookList.append("</student-list>");
+
+        return helpers.getXMLwrapper(_gradeBookList, "gradebook-list").toString();
+    }
 
     public static ConcurrentHashMap<String, Gradebook> GetDB(){
         return secondaryDB;

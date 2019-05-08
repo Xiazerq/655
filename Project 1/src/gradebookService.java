@@ -153,7 +153,7 @@ public class gradebookService {
 
         if(!gradeBookDB.containsKey(_name)){
             _gradeBook = new Gradebook(_serverName, _name);
-            gradeBookDB.putIfAbsent(_name, _gradeBook);
+            gradeBookDB.putIfAbsent(_gradeBook.getID(), _gradeBook);
         }else{
             return Response.status(400).entity("Gradebook Already Exists").build();
         }
