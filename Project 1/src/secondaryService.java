@@ -17,27 +17,27 @@ public class secondaryService {
     //@Produces("application/text")
     public String getGradeBooks(){
         // return "Hello Gradebook!";
-        return getGradeBookListXML();
+        return getGradeBookListXML(false);
     }
 
     @GET
     @Produces("application/xml")
-    @Path("{gradeBookID}")
+    @Path("{gradeBookID: ID\\d+}")
     //@Produces("application/text")
     public String getGradeBooks(@PathParam("gradeBookID") String name){
         // return "Hello Gradebook!";
-        return getGradeBookListXML();
+        return getGradeBookListXML(true);
     }
 
     @POST
-    @Path("{gradebookID}")
-    public Response postGradeBookGradebyID(@PathParam("gradebookID") String gradebookID) throws UnsupportedEncodingException {
+    @Path("{gradeBookID: ID\\d+}")
+    public Response postGradeBookGradebyID(@PathParam("gradeBookID") String gradebookID) throws UnsupportedEncodingException {
         return cloneGradeBook(gradebookID);
     }
 
     @PUT
-    @Path("{gradebookID}")
-    public Response putGradeBookGradebyID(@PathParam("gradebookID") String gradebookID) throws UnsupportedEncodingException{
+    @Path("{gradeBookID: ID\\d+}")
+    public Response putGradeBookGradebyID(@PathParam("gradeBookID") String gradebookID) throws UnsupportedEncodingException{
         return cloneGradeBook(gradebookID);
     }
     /*
@@ -78,7 +78,7 @@ public class secondaryService {
     }
 
     @DELETE
-    @Path("{gradeBookID}")
+    @Path("{gradeBookID: ID\\d+}")
     public Response deleteGradeBook(@PathParam("gradeBookID") String GradebookID) throws UnsupportedEncodingException {
         Gradebook _this = GetGradebookByID(GradebookID);
 
@@ -93,13 +93,17 @@ public class secondaryService {
     }
 
     private String getGradeBookListXML(){
+        return getGradeBookListXML(false);
+    }
+
+    private String getGradeBookListXML(boolean includeStudents){
         StringBuilder _gradeBookList = new StringBuilder();
 
         //_gradeBookList.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?><student-list>");
 
         //for (int x = 0; x < studentDB.mappingCount(); x++) {
         for(String key : secondaryDB.keySet()){
-            _gradeBookList.append(secondaryDB.get(key).getXML());
+            _gradeBookList.append(secondaryDB.get(key).getXML(includeStudents));
         }
 
         //_gradeBookList.append("</student-list>");

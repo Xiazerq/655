@@ -14,12 +14,12 @@ public class Student {
         this.setGrade(Grade);
     }
 
-    public Student(String Name, String Grade, String GradeBookID) {
+    public Student(String Name, String Grade, Gradebook GradeBook) {
 
         this.setName(Name);
         this.setGrade(Grade);
-        this.setGradeBookID(GradeBookID);
-        this.setId(helpers.GetHashID(Name, GradeBookID));
+        this.setGradeBookID(GradeBook.getID());
+        this.setId(helpers.GetHashID(Name, GradeBook.getName()));
     }
 
     public String getId() {

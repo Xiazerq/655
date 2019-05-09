@@ -9,6 +9,9 @@ import java.util.regex.Pattern;
 public class helpers {
 
     public static String DecodeValue(String Value) throws UnsupportedEncodingException {
+        if(Value == null){
+            return Value;
+        }
         System.out.println("Value Received: (" + Value + ")");
         String decoded = URLDecoder.decode(Value, StandardCharsets.UTF_8.toString());
         System.out.println("Decoded Value: (" + decoded + ")");
@@ -122,7 +125,7 @@ public class helpers {
             _rtnString = "Updated Student: " + _name + " grade to: " + _grade;
 
         }else{
-            _student = new Student(_name, _grade, _gbID);
+            _student = new Student(_name, _grade, GradeBook);
             _students.putIfAbsent(_studentID, _student);
             _rtnString = "Added Student: " + _name + " to Gradebook: " + GradeBook.getName();
         }
@@ -132,6 +135,6 @@ public class helpers {
     }
 
     public static String GetHashID(String GradebookName, String GradebookServer){
-        return Math.abs((GradebookName.toUpperCase() + GradebookServer.toUpperCase()).hashCode()) + "";
+        return "ID" + Math.abs((GradebookName.toUpperCase() + GradebookServer.toUpperCase()).hashCode());
     }
 }

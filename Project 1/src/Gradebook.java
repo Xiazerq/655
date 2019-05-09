@@ -60,7 +60,7 @@ public class Gradebook {
         this._copyID = null;
     }
 
-    public String getXML(){
+    public String getXML(boolean IncludeStudents){
         return "<Gradebook>\n" +
                 "\t\t<id>\n" +
                 this.getID() +
@@ -68,6 +68,7 @@ public class Gradebook {
                 "\t\t<name>\n" +
                 this.getName() +
                 "\t\t</name>\n" +
+                (IncludeStudents ? this.getStudentsXML() : "") +
                 "\t</Gradebook>";
     }
 
@@ -75,6 +76,7 @@ public class Gradebook {
 
         StringBuilder _rtn = new StringBuilder();
 
+        /*
         _rtn.append("\t\t<id>\n" +
                 this.getID() +
                 "\t\t</id>\n" +
@@ -83,10 +85,13 @@ public class Gradebook {
                 "\t\t</name>\n" +
                 "\t\t<students>\n");
 
+         */
+        _rtn.append("\t\t<students>\n");
+
         ConcurrentHashMap<String, Student> _sDB = studentservice.GetDB();
         for(String _key : _sDB.keySet()){
             Student _stu = _sDB.get(_key);
-            if(_stu.getGradeBookID().equals(this._id)){
+            if(_stu.getGradeBookID().equals(this._id) || _stu.getGradeBookID().equals(this._copyID)){
                 _rtn.append(_stu.getXML());
             }
         }

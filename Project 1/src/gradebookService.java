@@ -20,16 +20,16 @@ public class gradebookService {
     //@Produces("application/text")
     public String getGradeBooks(){
        // return "Hello Gradebook!";
-        return getGradeBookListXML();
+        return getGradeBookListXML(false);
     }
 
     @GET
     @Produces("application/xml")
-    @Path("{gradeBookID}")
+    @Path("{gradeBookID: ID\\d+}")
     //@Produces("application/text")
     public String getGradeBooks(@PathParam("gradeBookID") String name){
         // return "Hello Gradebook!";
-        return getGradeBookListXML();
+        return getGradeBookListXML(true);
     }
 
     /*
@@ -54,7 +54,7 @@ public class gradebookService {
 
     @GET
     @Produces("application/xml")
-    @Path("{gradeBookID}/student")
+    @Path("{gradeBookID: ID\\d+}/student")
     public String postStudent(@PathParam("gradeBookID") String GradeBookID) throws UnsupportedEncodingException{
         Gradebook _this = getGradebookByID(GradeBookID);
 
@@ -68,25 +68,25 @@ public class gradebookService {
     }
 
     @POST
-    @Path("{gradeBookID}/student/{studentName}")
+    @Path("{gradeBookID: ID\\d+}/student/{studentName}")
     public Response postStudent(@PathParam("gradeBookID") String GradeBookID, @PathParam("studentName") String StudentName) throws UnsupportedEncodingException{
         return addUpdateStudent(GradeBookID, StudentName, null);
     }
 
     @PUT
-    @Path("{gradeBookID}/student/{studentName}")
+    @Path("{gradeBookID: ID\\d+}/student/{studentName}")
     public Response putStudent(@PathParam("gradeBookID") String GradeBookID, @PathParam("studentName") String StudentName) throws UnsupportedEncodingException{
         return addUpdateStudent(GradeBookID, StudentName, null);
     }
 
     @POST
-    @Path("{gradeBookID}/student/{studentName}/grade/{grade}")
+    @Path("{gradeBookID: ID\\d+}/student/{studentName}/grade/{grade}")
     public Response postStudentGrade(@PathParam("gradeBookID") String GradeBookID, @PathParam("studentName") String StudentName, @PathParam("grade") String Grade) throws UnsupportedEncodingException{
         return addUpdateStudent(GradeBookID, StudentName, Grade);
     }
 
     @PUT
-    @Path("{gradeBookID}/student/{studentName}/grade/{grade}")
+    @Path("{gradeBookID: ID\\d+}/student/{studentName}/grade/{grade}")
     public Response putStudentGrade(@PathParam("gradeBookID") String GradeBookID, @PathParam("studentName") String StudentName, @PathParam("grade") String Grade) throws UnsupportedEncodingException{
             return addUpdateStudent(GradeBookID, StudentName, Grade);
     }
@@ -108,7 +108,7 @@ public class gradebookService {
     }
 
     @DELETE
-    @Path("{gradeBookID}")
+    @Path("{gradeBookID: ID\\d+}")
     public Response deleteGradeBook(@PathParam("gradeBookID") String GradebookID) throws UnsupportedEncodingException {
         Gradebook _this = getGradebookByID(GradebookID);
 
@@ -151,7 +151,7 @@ public class gradebookService {
 
         Gradebook _gradeBook;
 
-        if(!gradeBookDB.containsKey(_name)){
+        if(!gradeBookDB.containsKey(helpers.GetHashID(_name, _serverName))){
             _gradeBook = new Gradebook(_serverName, _name);
             gradeBookDB.putIfAbsent(_gradeBook.getID(), _gradeBook);
         }else{
@@ -165,17 +165,17 @@ public class gradebookService {
     }
 
     private Response getGradeBookListResponse(){
-        return Response.status(200).entity(getGradeBookListXML()).build();
+        return Response.status(200).entity(getGradeBookListXML(false)).build();
     }
 
-    private String getGradeBookListXML(){
+    private String getGradeBookListXML(boolean includeStudents){
         StringBuilder _gradeBookList = new StringBuilder();
 
         //_gradeBookList.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?><student-list>");
 
         //for (int x = 0; x < studentDB.mappingCount(); x++) {
         for(String key : gradeBookDB.keySet()){
-            _gradeBookList.append(gradeBookDB.get(key).getXML());
+            _gradeBookList.append(gradeBookDB.get(key).getXML(includeStudents));
         }
 
         //_gradeBookList.append("</student-list>");
