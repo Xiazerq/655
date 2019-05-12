@@ -86,7 +86,7 @@ public class secondaryService {
             return Response.status(400).entity(_invalidGB).build();
         }
 
-        gradebookService.getGradebookByID(GradebookID).nullifyCopy();
+        gradebookService.getGradebookByID(_this.getCopyID()).nullifyCopy();
         secondaryDB.remove(GradebookID);
 
         return Response.status(400).entity(_this.getName() + " was successfully deleted from the Secondary Server").build();
